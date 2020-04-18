@@ -1,0 +1,21 @@
+{
+  "name": "restful_api",
+  "version": "1.0.0",
+  "description": "Shopping API Application created using nodejs, Express ...",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest",
+    "start": "node server.js"
+  },
+  "keywords": [
+    "Edrich",
+    "Mkhasi"
+  ],
+  "author": "Edrich Mkhasi",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1",
+    "morgan": "^1.10.0",
+    "nodemon": "^2.0.3"
+  }
+}
