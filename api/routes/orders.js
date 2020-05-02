@@ -10,8 +10,13 @@ router.get('/', (req, res, next) => {
 
 // POST to create an orders
 router.post('/', (req, res, next) => {
+  const order = {
+    projectId: req.body.projectId,
+    projectNumber: req.body.projectNumber
+  }
   res.status(201).json({
-    message: 'Order created'
+    message: 'Order created',
+    order: order
   });
 });
 

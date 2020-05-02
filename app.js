@@ -4,10 +4,14 @@ const express = require('express');
 // spin up express fuction
 const app = express();
 const morgan = require('morgan');
+const bodyParser = require('body-parser');
 
 // display requests on the console using morgan
 app.use(morgan('dev'));
+app.use(bodyParser.urlencoded({extended: false}));
+app.use(bodyParser.json());
 
+// Routes
 app.use('/products', require('./api/routes/products'));
 app.use('/orders', require('./api/routes/orders'));
 
