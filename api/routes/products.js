@@ -6,11 +6,28 @@ const Product = require('../../models/products.schema');
 //get all projects
 router.get('/', (req, res, next) => {
   Product.find()
+  .select('title link description _id')
   .exec()
   .then(docs => {
     console.log(docs);
+    const response = {
+      count: docs.length,
+      products: docs.map(doc => {
+        return {
+          title: doc.title,
+          link: doc.link,
+          description: doc.description,
+          _id: doc._id,
+          request: {
+            type: 'GET',
+            url: 'http://localhost:4000/products/'+ doc._id
+          }
+        }
+      })
+    }
+
     if(docs.length > 0){
-      res.status(200).json(docs);
+      res.status(200).json(response);
     }else{
       res.status(404).json({
         message: 'No Project found'
@@ -43,7 +60,16 @@ router.post('/', (req, res, next) => {
     console.log(result);
     res.status(201).json({
       message: 'POST products api',
-      createdProject: result
+      createdProject: {
+        title: result.title,
+        link: result.link,
+        description: result.description,
+        _id: result._id,
+        request: {
+          type: 'GET',
+          url: 'http://localhost:4000/products/'+ result._id
+        }
+      }
     });
   })
   .catch(err => {
@@ -55,6 +81,7 @@ router.post('/', (req, res, next) => {
  
 });
 
+
 //get products by :id
 router.get('/:projectId', (req, res, next) => {
   const id = req.params.projectId;
@@ -63,7 +90,14 @@ router.get('/:projectId', (req, res, next) => {
   .then(doc => {
     console.log(doc);
     if(doc){
-      res.status(200).json(doc);
+      res.status(200).json({
+        product: doc,
+        request: {
+        type: 'GET',
+        url: 'http://localhost:4000/products/'+ doc._id
+      }
+      });
+      
     }else{
       res.status(404).json({
         message: 'No valid entry found'
@@ -83,14 +117,22 @@ router.patch('/:projectId', (req, res, next) => {
   const id = req.params.projectId;
   //check if you want to update all
   const updateOps = {};
+
   for(const ops of req.body){
     updateOps[ops.propName] = ops.value;
   }
+
   Product.update({_id: id}, { $set: updateOps })
   .exec()
   .then(result => {
     console.log(result);
-    res.status(200).json( result)
+    res.status(200).json({
+      message: 'Product updated',
+      request: {
+        type: 'GET',
+        url: 'http:localhost:4000/products/'+ result._id
+      }
+    })
   })
   .catch(err => {
     console.log(err);
@@ -101,13 +143,20 @@ router.patch('/:projectId', (req, res, next) => {
 
 });
 
+
 //delete products by :id
 router.delete('/:projectId', (req, res, next) => {
   const id = req.params.projectId;
   Product.remove({_id: id})
   .exec()
   .then(result => {
-    console.log(200).json(result);
+    console.log(200).json({
+      message: 'Project deleted',
+      request: {
+        type: 'GET',
+        url: 'http://localhost:4000/'
+      }
+    });
   })
   .catch(err => {
     console.log(err);
