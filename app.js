@@ -4,12 +4,28 @@ const express = require('express');
 // spin up express fuction
 const app = express();
 const morgan = require('morgan');
+const connectDB = require('./config/db');
 const bodyParser = require('body-parser');
 
 // display requests on the console using morgan
 app.use(morgan('dev'));
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
+
+
+// ajust cors
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Headers', 'Origine, X-Requested-With, Content-Type, Accept, Authorization, x-auth-token');
+  if (req.method === 'OPTIONS') { 
+      res.header('Access-Control-Allow-Methods', 'PUT, POST, PATCH, DELETE, GET');
+      res.status(200).json({});
+  }
+  next();
+});
+
+// Connect Database
+connectDB();
 
 // Routes
 app.use('/products', require('./api/routes/products'));
